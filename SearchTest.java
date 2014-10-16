@@ -1,3 +1,4 @@
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.BufferedReader;
@@ -12,20 +13,58 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 
-import junit.framework.Assert;
-
 import org.junit.Test;
 
 public class SearchTest {
 
 	@Test
-	public void test() throws IOException {
+	public void sampleTest() throws IOException {
 		String testPath = "/Users/tungpham31/Documents/workspace/CS383-HW5/Tests/sample.txt";
 		String input = readInputFromFile(testPath);
 		int[][][] initBoard = readBoardFromFile(input);
 		String result = Search.compute(BoardBuilder.fromString(input))
 				.assignmentsToString();
 		assertTrue(isValidAssignments(initBoard, result));
+	}
+
+	@Test
+	public void simple_3x3() throws IOException {
+		String testPath = "/Users/tungpham31/Documents/workspace/CS383-HW5/Tests/3x3-simple.problem";
+		String input = readInputFromFile(testPath);
+		int[][][] initBoard = readBoardFromFile(input);
+		String result = Search.compute(BoardBuilder.fromString(input))
+				.assignmentsToString();
+		assertTrue(isValidAssignments(initBoard, result));
+	}
+
+	@Test
+	public void selfTest1() throws IOException {
+		String testPath = "/Users/tungpham31/Documents/workspace/CS383-HW5/Tests/3x3-simple.problem";
+		String input = readInputFromFile(testPath);
+		int[][][] initBoard = readBoardFromFile(input);
+		String result = "1 1 1\n2 2 4\n1 2 3\n2 1 3";
+
+		assertFalse(isValidAssignments(initBoard, result));
+	}
+
+	@Test
+	public void selfTest2() throws IOException {
+		String testPath = "/Users/tungpham31/Documents/workspace/CS383-HW5/Tests/3x3-simple.problem";
+		String input = readInputFromFile(testPath);
+		int[][][] initBoard = readBoardFromFile(input);
+		String result = "1 1 1\n2 2 4\n1 2 3";
+
+		assertFalse(isValidAssignments(initBoard, result));
+	}
+	
+	@Test
+	public void selfTest3() throws IOException {
+		String testPath = "/Users/tungpham31/Documents/workspace/CS383-HW5/Tests/3x3-simple.problem";
+		String input = readInputFromFile(testPath);
+		int[][][] initBoard = readBoardFromFile(input);
+		String result = "1 1 2\n2 2 5\n1 2 2\n2 1 1";
+
+		assertFalse(isValidAssignments(initBoard, result));
 	}
 
 	/**
@@ -110,7 +149,9 @@ public class SearchTest {
 				}
 				if (isClueCell(initBoard, i, j)) {
 					if (sum != initBoard[i][j][0]) {
-						Assert.fail("Sum Contraint Violated on " + i + " " + j);
+						System.out.println("Sum Contraint Violated on " + i
+								+ " " + j);
+						return false;
 					}
 					sum = 0;
 				}
@@ -126,7 +167,9 @@ public class SearchTest {
 				}
 				if (isClueCell(initBoard, i, j)) {
 					if (sum != initBoard[i][j][1]) {
-						Assert.fail("Sum Contraint Violated on " + i + " " + j);
+						System.out.println("Sum Contraint Violated on " + i
+								+ " " + j);
+						return false;
 					}
 					sum = 0;
 				}
@@ -145,8 +188,9 @@ public class SearchTest {
 				if (isEmptyCell(initBoard, i, j)) {
 					int value = assignemnts.get(new Cell(j, i));
 					if (values.contains(value)) {
-						Assert.fail("Unique Contraint Violated on " + i + " "
-								+ j);
+						System.out.println("Unique Contraint Violated on " + i
+								+ " " + j);
+						return false;
 					} else {
 						values.add(value);
 					}
@@ -165,8 +209,9 @@ public class SearchTest {
 				if (isEmptyCell(initBoard, i, j)) {
 					int value = assignemnts.get(new Cell(j, i));
 					if (values.contains(value)) {
-						Assert.fail("Unique Contraint Violated on " + i + " "
-								+ j);
+						System.out.println("Unique Contraint Violated on " + i
+								+ " " + j);
+						return false;
 					} else {
 						values.add(value);
 					}
