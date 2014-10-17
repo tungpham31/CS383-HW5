@@ -166,10 +166,10 @@ public class BoardBuilder {
 
 		return sumAndUniqueConstraints;
 	}
-	
+
 	private Map<Cell, Set<Integer>> createCellsToDomains() {
 		final Map<Cell, Set<Integer>> cellsToDomains = new HashMap<Cell, Set<Integer>>();
-		
+
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
 				Cell cell = new Cell(x, y);
@@ -182,7 +182,45 @@ public class BoardBuilder {
 				}
 			}
 		}
-		
+
+		for (Map.Entry<Cell, Integer> entry : horizontalClues.entrySet()) {
+			int sum = entry.getValue();
+			Cell clueCell = entry.getKey();
+
+			// Horizontal cells from the clue.
+			List<Cell> cells = getClueCells(clueCell, true);
+			int lowerbound = Utilities.calDomainLowerbound(cells.size(), sum);
+			int upperbound = Utilities.calDomainUpperbound(cells.size(), sum);
+
+			final Set<Integer> domain = new HashSet<Integer>();
+			for (int i = lowerbound; i <= upperbound; i++) {
+				domain.add(i);
+			}
+			for (Cell cell : cells) {
+				cellsToDomains.put(cell, new HashSet<Integer>(domain));
+			}
+		}
+
+		for (Map.Entry<Cell, Integer> entry : verticalClues.entrySet()) {
+			int sum = entry.getValue();
+			Cell clueCell = entry.getKey();
+
+			// Vertical cells from the clue.
+			List<Cell> cells = getClueCells(clueCell, false);
+			int lowerbound = Utilities.calDomainLowerbound(cells.size(), sum);
+			int upperbound = Utilities.calDomainUpperbound(cells.size(), sum);
+
+			final Set<Integer> domain = new HashSet<Integer>();
+			for (int i = lowerbound; i <= upperbound; i++) {
+				domain.add(i);
+			}
+			for (Cell cell : cells) {
+				final Set<Integer> intersectDomain = cellsToDomains.get(cell);
+				intersectDomain.retainAll(domain);
+				cellsToDomains.put(cell, intersectDomain);
+			}
+		}
+
 		return cellsToDomains;
 	}
 
@@ -191,6 +229,7 @@ public class BoardBuilder {
 		List<SumAndUniqueConstraint> sumAndUniqueConstraints = createSumConstraints();
 		Map<Cell, Set<Integer>> cellsToDomains = createCellsToDomains();
 
-		return new Board(emptyAssignments, sumAndUniqueConstraints, cellsToDomains);
+		return new Board(emptyAssignments, sumAndUniqueConstraints,
+				cellsToDomains);
 	}
 }

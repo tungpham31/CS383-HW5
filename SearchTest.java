@@ -46,6 +46,16 @@ public class SearchTest {
 				.assignmentsToString();
 		assertTrue(isValidAssignments(initBoard, result));
 	}
+	
+	@Test
+	public void easy_6x6() throws IOException {
+		String testPath = "/Users/tungpham31/Documents/workspace/CS383-HW5/Tests/6x6-easy.test";
+		String input = readInputFromFile(testPath);
+		int[][][] initBoard = readBoardFromFile(input);
+		String result = Search.compute(BoardBuilder.fromString(input))
+				.assignmentsToString();
+		assertTrue(isValidAssignments(initBoard, result));
+	}
 
 	@Test
 	public void selfTest1() throws IOException {

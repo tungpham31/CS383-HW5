@@ -107,8 +107,8 @@ public class Board {
 	 * @param cell
 	 * @return an array of possible values for a given cell
 	 */
-	public int[] orderDomainValues(Cell cell) {
-		return new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+	public Set<Integer> orderDomainValues(Cell cell) {
+		return cellsToDomains.get(cell);
 	}
 
 	/**
@@ -205,13 +205,14 @@ public class Board {
 		return sb.toString();
 	}
 
-	private Map<Cell, Set<Integer>> cloneMap(Map<Cell, Set<Integer>> cellsToDomains) {
+	private Map<Cell, Set<Integer>> cloneMap(
+			Map<Cell, Set<Integer>> cellsToDomains) {
 		final Map<Cell, Set<Integer>> clone = new HashMap<Cell, Set<Integer>>();
-		
+
 		for (Entry<Cell, Set<Integer>> entry : cellsToDomains.entrySet()) {
 			clone.put(entry.getKey(), new HashSet<Integer>(entry.getValue()));
 		}
-		
+
 		return clone;
 	}
 }
