@@ -42,7 +42,7 @@ import java.util.Set;
  */
 public class Board {
 	private final Map<Cell, Integer> assignments;
-	private final List<SumAndUniqueConstraint> sumAndUniqueConstraints;
+	private final List<Constraint> sumAndUniqueConstraints;
 	private final Map<Cell, Set<Integer>> cellsToDomains;
 
 	/**
@@ -54,7 +54,7 @@ public class Board {
 	 * @param sumAndUniqueConstraints
 	 */
 	public Board(Map<Cell, Integer> assignments,
-			List<SumAndUniqueConstraint> sumAndUniqueConstraints,
+			List<Constraint> sumAndUniqueConstraints,
 			Map<Cell, Set<Integer>> cellsToDomains) {
 		this.assignments = assignments;
 		this.sumAndUniqueConstraints = sumAndUniqueConstraints;
@@ -127,8 +127,11 @@ public class Board {
 		Map<Cell, Integer> newAssignments = new HashMap<Cell, Integer>(
 				assignments);
 		newAssignments.put(cell, value);
-		return new Board(newAssignments, sumAndUniqueConstraints,
-				cloneMap(cellsToDomains));
+
+		return BoardBuilder.buildWithForwardChecking(newAssignments,
+				sumAndUniqueConstraints, cloneMap(cellsToDomains), cell);
+		// return new Board(newAssignments, sumAndUniqueConstraints,
+		// cloneMap(cellsToDomains));
 	}
 
 	/**
@@ -137,7 +140,7 @@ public class Board {
 	 *         constraints
 	 */
 	public boolean isConsistent() {
-		for (SumAndUniqueConstraint sumAndUniqueConstraint : sumAndUniqueConstraints) {
+		for (Constraint sumAndUniqueConstraint : sumAndUniqueConstraints) {
 			List<Integer> assignedValues = new ArrayList<Integer>();
 			for (Cell cell : sumAndUniqueConstraint.cells) {
 				assignedValues.add(assignments.get(cell));

@@ -147,21 +147,21 @@ public class BoardBuilder {
 		return cells;
 	}
 
-	private List<SumAndUniqueConstraint> createSumConstraints() {
-		List<SumAndUniqueConstraint> sumAndUniqueConstraints = new ArrayList<SumAndUniqueConstraint>();
+	private List<Constraint> createSumConstraints() {
+		List<Constraint> sumAndUniqueConstraints = new ArrayList<Constraint>();
 
 		for (Map.Entry<Cell, Integer> entry : horizontalClues.entrySet()) {
 			int sum = entry.getValue();
 			Cell clueCell = entry.getKey();
 			List<Cell> cells = getClueCells(clueCell, true);
-			sumAndUniqueConstraints.add(new SumAndUniqueConstraint(sum, cells));
+			sumAndUniqueConstraints.add(new Constraint(sum, cells));
 		}
 
 		for (Map.Entry<Cell, Integer> entry : verticalClues.entrySet()) {
 			int sum = entry.getValue();
 			Cell clueCell = entry.getKey();
 			List<Cell> cells = getClueCells(clueCell, false);
-			sumAndUniqueConstraints.add(new SumAndUniqueConstraint(sum, cells));
+			sumAndUniqueConstraints.add(new Constraint(sum, cells));
 		}
 
 		return sumAndUniqueConstraints;
@@ -226,10 +226,64 @@ public class BoardBuilder {
 
 	private Board build() {
 		Map<Cell, Integer> emptyAssignments = createEmptyAssignments();
-		List<SumAndUniqueConstraint> sumAndUniqueConstraints = createSumConstraints();
+		List<Constraint> sumAndUniqueConstraints = createSumConstraints();
 		Map<Cell, Set<Integer>> cellsToDomains = createCellsToDomains();
 
 		return new Board(emptyAssignments, sumAndUniqueConstraints,
 				cellsToDomains);
+	}
+
+	/*
+	 * Do forward checking with the sum constraint to tighten domain for the
+	 * cells. Not the best implementation. Could make it much faster.
+	 */
+	public static Board buildWithForwardChecking(
+			Map<Cell, Integer> assignments, List<Constraint> constraints,
+			Map<Cell, Set<Integer>> cellsToDomains, Cell newAssignedCell) {
+		for (Constraint constraint : constraints) {
+			if (!constraint.cells.contains(newAssignedCell)) {
+				continue;
+			}
+			
+			int sum = constraint.sum;
+			int nEmptyCells = 0;
+			final Set<Integer> usedCellValues = new HashSet<Integer>();
+
+			// Update the new sum.
+			for (Cell cell : constraint.cells) {
+				if (assignments.get(cell) != null) {
+					int cellValue = assignments.get(cell);
+					sum -= cellValue;
+					usedCellValues.add(cellValue);
+				} else {
+					nEmptyCells++;
+				}
+			}
+
+			if (nEmptyCells == 0) {
+				continue;
+			}
+
+			// Re-calculate lowerbound and upperbound for domain of empty cells.
+			int lowerbound = Utilities.calDomainLowerbound(nEmptyCells, sum);
+			int upperbound = Utilities.calDomainUpperbound(nEmptyCells, sum);
+			final Set<Integer> newDomain = new HashSet<Integer>();
+			for (int value = lowerbound; value <= upperbound; value++)
+				if (!usedCellValues.contains(value)) {
+					newDomain.add(value);
+				}
+
+			// Update the domain for the existing empty cells.
+			for (Cell cell : constraint.cells) {
+				if (assignments.get(cell) == null) {
+					final Set<Integer> intersectDomain = cellsToDomains
+							.get(cell);
+					intersectDomain.retainAll(newDomain);
+					cellsToDomains.put(cell, intersectDomain);
+				}
+			}
+		}
+
+		return new Board(assignments, constraints, cellsToDomains);
 	}
 }

@@ -86,6 +86,46 @@ public class SearchTest {
 				.assignmentsToString();
 		assertTrue(isValidAssignments(initBoard, result));
 	}
+	
+	@Test
+	public void easy_13x13() throws IOException {
+		String testPath = "/Users/tungpham31/Documents/workspace/CS383-HW5/Tests/13x13-easy.test";
+		String input = readInputFromFile(testPath);
+		int[][][] initBoard = readBoardFromFile(input);
+		String result = Search.compute(BoardBuilder.fromString(input))
+				.assignmentsToString();
+		assertTrue(isValidAssignments(initBoard, result));
+	}
+	
+	@Test
+	public void hard_13x13() throws IOException {
+		String testPath = "/Users/tungpham31/Documents/workspace/CS383-HW5/Tests/13x13-hard.test";
+		String input = readInputFromFile(testPath);
+		int[][][] initBoard = readBoardFromFile(input);
+		String result = Search.compute(BoardBuilder.fromString(input))
+				.assignmentsToString();
+		assertTrue(isValidAssignments(initBoard, result));
+	}
+	
+	@Test
+	public void easy16x16() throws IOException {
+		String testPath = "/Users/tungpham31/Documents/workspace/CS383-HW5/Tests/16x16-easy.test";
+		String input = readInputFromFile(testPath);
+		int[][][] initBoard = readBoardFromFile(input);
+		String result = Search.compute(BoardBuilder.fromString(input))
+				.assignmentsToString();
+		assertTrue(isValidAssignments(initBoard, result));
+	}
+	
+	@Test
+	public void hard16x16() throws IOException {
+		String testPath = "/Users/tungpham31/Documents/workspace/CS383-HW5/Tests/16x16-hard.test";
+		String input = readInputFromFile(testPath);
+		int[][][] initBoard = readBoardFromFile(input);
+		String result = Search.compute(BoardBuilder.fromString(input))
+				.assignmentsToString();
+		assertTrue(isValidAssignments(initBoard, result));
+	}
 
 	@Test
 	public void selfTest1() throws IOException {

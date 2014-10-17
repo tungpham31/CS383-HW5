@@ -31,11 +31,11 @@ import java.util.List;
 /**
  * Created by liberato on 10/8/14.
  */
-public class SumAndUniqueConstraint {
+public class Constraint {
 	public final Integer sum;
 	public final List<Cell> cells;
 
-	public SumAndUniqueConstraint(Integer sum, List<Cell> cells) {
+	public Constraint(Integer sum, List<Cell> cells) {
 		this.sum = sum;
 		this.cells = cells;
 	}
