@@ -36,6 +36,16 @@ public class SearchTest {
 				.assignmentsToString();
 		assertTrue(isValidAssignments(initBoard, result));
 	}
+	
+	@Test
+	public void simple_4x4() throws IOException {
+		String testPath = "/Users/tungpham31/Documents/workspace/CS383-HW5/Tests/4x4-simple.problem";
+		String input = readInputFromFile(testPath);
+		int[][][] initBoard = readBoardFromFile(input);
+		String result = Search.compute(BoardBuilder.fromString(input))
+				.assignmentsToString();
+		assertTrue(isValidAssignments(initBoard, result));
+	}
 
 	@Test
 	public void selfTest1() throws IOException {

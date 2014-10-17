@@ -166,11 +166,31 @@ public class BoardBuilder {
 
 		return sumAndUniqueConstraints;
 	}
+	
+	private Map<Cell, Set<Integer>> createCellsToDomains() {
+		final Map<Cell, Set<Integer>> cellsToDomains = new HashMap<Cell, Set<Integer>>();
+		
+		for (int x = 0; x < width; x++) {
+			for (int y = 0; y < height; y++) {
+				Cell cell = new Cell(x, y);
+				if (isOpenCell(cell)) {
+					final Set<Integer> domain = new HashSet<Integer>();
+					for (int i = 1; i <= 9; i++) {
+						domain.add(i);
+					}
+					cellsToDomains.put(cell, domain);
+				}
+			}
+		}
+		
+		return cellsToDomains;
+	}
 
 	private Board build() {
 		Map<Cell, Integer> emptyAssignments = createEmptyAssignments();
 		List<SumAndUniqueConstraint> sumAndUniqueConstraints = createSumConstraints();
+		Map<Cell, Set<Integer>> cellsToDomains = createCellsToDomains();
 
-		return new Board(emptyAssignments, sumAndUniqueConstraints);
+		return new Board(emptyAssignments, sumAndUniqueConstraints, cellsToDomains);
 	}
 }
